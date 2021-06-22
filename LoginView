@@ -1,0 +1,142 @@
+package servic;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.net.URL;
+
+public class LoginView extends JFrame{
+    //设置标题,按钮
+    JLabel namelabel=new JLabel("工大学生成绩管理系统",JLabel.CENTER);
+    SpringLayout springLayout=new SpringLayout();
+    JPanel centerpanel=new JPanel(springLayout);
+
+    JLabel userlabel=new JLabel("用户名：");
+    JTextField usertxt=new JTextField();
+    JLabel pwdlabel=new JLabel("密码:");
+    JTextField passwordtxt=new JTextField();
+    JButton loginbtn1=new JButton("登录");
+    JButton loginbtn2=new JButton("重置");
+
+
+    SystemTray systemTray;//托盘
+    TrayIcon trayIcon;
+    Loginhandler loginhandler;
+
+    public LoginView(){
+        super("工大学生成绩管理系统");
+        loginhandler=new Loginhandler(this);
+        Container contentpane=getContentPane();
+        //设置字体与框的大小
+        namelabel.setFont(new Font("宋体",Font.PLAIN,40));
+        namelabel.setPreferredSize(new Dimension(0, 80));
+        Font centerfont=new Font("楷体",Font.PLAIN,20);
+        userlabel.setFont(centerfont);
+        pwdlabel.setFont(centerfont);
+        loginbtn1.setFont(centerfont);
+        loginbtn2.setFont(centerfont);
+        usertxt.setPreferredSize(new Dimension(200, 30));
+        passwordtxt.setFont(centerfont);
+        passwordtxt.setPreferredSize(new Dimension(200, 30));
+        //把组件加入面板
+        centerpanel.add(userlabel);
+        centerpanel.add(usertxt);
+        centerpanel.add(pwdlabel);
+        centerpanel.add(passwordtxt);
+        centerpanel.add(loginbtn1);
+        centerpanel.add(loginbtn2);
+        loginbtn1.addActionListener(loginhandler);//事件处理
+        loginbtn1.addKeyListener(loginhandler);//回车登录
+        loginbtn2.addActionListener(loginhandler);//事件处理
+
+        //布局
+        //布局userlabel
+        Spring childwidth=Spring.sum(Spring.width(userlabel), Spring.width(usertxt));
+        Spring.constant(20);
+        int offxetx=childwidth.getValue()/2;
+        springLayout.putConstraint(SpringLayout.WEST,userlabel,-offxetx,SpringLayout.HORIZONTAL_CENTER,centerpanel);
+        springLayout.putConstraint(SpringLayout.NORTH, userlabel, 20,SpringLayout.NORTH, centerpanel);
+        //布局usertxt
+        springLayout.putConstraint(SpringLayout.WEST, usertxt, 20, SpringLayout.EAST, userlabel);
+        springLayout.putConstraint(SpringLayout.NORTH, userlabel, 0, SpringLayout.NORTH, usertxt);
+        //布局pwdlabel
+        springLayout.putConstraint(SpringLayout.EAST, pwdlabel, 0, SpringLayout.EAST, userlabel);
+        springLayout.putConstraint(SpringLayout.NORTH, pwdlabel, 20, SpringLayout.SOUTH,userlabel);
+        //布局passField
+        springLayout.putConstraint(SpringLayout.WEST,passwordtxt, 20, SpringLayout.EAST, pwdlabel);
+        springLayout.putConstraint(SpringLayout.NORTH,passwordtxt, 0, SpringLayout.NORTH,pwdlabel);
+        //布局两个按钮
+        springLayout.putConstraint(SpringLayout.WEST, loginbtn1, 50, SpringLayout.WEST, pwdlabel);
+        springLayout.putConstraint(SpringLayout.NORTH, loginbtn1, 20, SpringLayout.SOUTH, pwdlabel);
+        springLayout.putConstraint(SpringLayout.WEST, loginbtn2, 50, SpringLayout.EAST, loginbtn1);
+        springLayout.putConstraint(SpringLayout.NORTH, loginbtn2, 0, SpringLayout.NORTH, loginbtn1);
+
+        contentpane.add(namelabel,BorderLayout.NORTH);
+        contentpane.add(centerpanel,BorderLayout.CENTER);
+        //设置托盘
+        if(SystemTray.isSupported()) {
+            systemTray = SystemTray.getSystemTray();
+            URL imageUrl = LoginView.class.getClassLoader().getResource("picture.png");
+            trayIcon = new TrayIcon(new ImageIcon(imageUrl).getImage());
+            //设置托盘图片大小自动缩放
+            trayIcon.setImageAutoSize(true);
+            //抛出异常
+            try {
+                systemTray.add(trayIcon);
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+            //最小化时销毁资源
+            this.addWindowFocusListener(new WindowAdapter() {
+                @Override//
+                public void windowIconified(WindowEvent e) {
+                   LoginView.this.dispose();
+                }
+            });
+            //托盘事件监听
+            trayIcon.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int clickcount = e.getClickCount();
+                    if (clickcount == 1) {
+                        LoginView.this.setExtendedState(JFrame.NORMAL);
+                    }
+                    LoginView.this.setVisible(true);
+                }
+
+                });
+            }
+
+
+
+        //设置login1为默认按钮
+        getRootPane().setDefaultButton(loginbtn1);
+        //自定义图标
+        URL imageUrl=LoginView.class.getClassLoader().getResource("picture.png");
+        setIconImage( new ImageIcon(imageUrl).getImage());
+
+        setSize(600, 400);
+        setLocationRelativeTo(null);//使显示框居中
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//点×关闭后退出程序
+        setResizable(false);//显示框无法改变
+        setVisible(true);   //可见
+    }
+
+    public static void main(String[] args) {
+        new LoginView();
+    }
+
+    public JTextField getUsertxt(){
+        return usertxt;
+    }
+
+    public JTextField getPasswordtxt() {
+        return passwordtxt;
+    }
+
+
+    public JPasswordField getPwdField() {
+        JPasswordField pwdField = null;
+        return pwdField;
+    }
+}
