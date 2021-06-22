@@ -1,0 +1,146 @@
+package servic;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
+
+public class MainView extends JFrame{
+    JPanel norjpanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JButton addBtn=new JButton("增加");
+    JButton updateBtn=new JButton("删除");
+    JButton delBtn=new JButton("修改");
+    JTextField searchTxt=new JTextField(15);
+    JButton searchBtn=new JButton("查询");
+
+    JPanel southpanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    JButton preBtn=new JButton("上一页");
+    JButton nextBtn=new JButton("下一页");
+
+    MainViewTable mainViewTable=new MainViewTable();
+
+    private int pageNow=1;//当前显示第几页
+    private int pageSize=10;//一页显示多少条记录
+
+    MainViewhandler mainViewhandler;
+    public MainView (){
+        super("工大学生成绩管理系统");
+        Container contentpane=getContentPane();
+        mainViewhandler=new MainViewhandler(this);
+        //放置在北边的组件
+        LayoutNorth(contentpane);
+        //设置中间的jtable
+        LayoutCenter(contentpane);
+        //放置在南边的组件
+        LayoutSouth(contentpane);
+
+
+        //自定义图标
+        URL imageUrl = LoginView.class.getClassLoader().getResource("picture.png");
+        setIconImage(new ImageIcon(imageUrl).getImage());
+
+        //根据屏幕大小设置主界面的大小
+        setBounds(DimensionUtil.getBounds());
+        //设置窗体完全充满屏幕大小
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        setSize(600, 400);
+        setLocationRelativeTo(null);//使显示框居中
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//点×关闭后退出程序
+        setResizable(true);//显示框无法改变
+        setVisible(true);   //可见
+
+
+    }
+
+    private void LayoutCenter(Container contentpane) {
+        TableDTO dto = getTableDTO();
+        MainViewTableModel mainViewTableModel = MainViewTableModel.assembleModel(dto.getData());
+        //把jtable与model关联
+        mainViewTable.setModel(mainViewTableModel);
+        mainViewTable.RenderRule();
+        JScrollPane jScrollPane=new JScrollPane(mainViewTable);
+        contentpane.add(jScrollPane,BorderLayout.CENTER);
+        showPreNext(dto.getTotalCount());
+    }
+
+    private TableDTO getTableDTO() {
+        StudentService studentService = new StudentServiceImpl();
+        StudentRequest request = new StudentRequest();
+        request.setPageNow(pageNow);
+        request.setPageSize(pageSize);
+        request.setSearchKey(searchTxt.getText().trim());
+        TableDTO tableDTO = studentService.retrieveStudents(request);
+        return tableDTO;
+    }
+
+    private void LayoutSouth(Container contentpane) {
+        preBtn.addActionListener(mainViewhandler);
+        nextBtn.addActionListener(mainViewhandler);
+        southpanel.add(preBtn);
+        southpanel.add(nextBtn);
+        contentpane.add(southpanel,BorderLayout.SOUTH);
+    }
+     //设置上一页下一页是否可见
+     private void showPreNext(int totalCount){
+        if (pageNow==1){
+            preBtn.setVisible(false);
+        }else {
+            preBtn.setVisible(true);
+        }
+        int pageCount=0;//总共有多少页
+         if (totalCount%pageSize==0){
+             pageCount=totalCount/pageSize;
+         }else {
+             pageCount=totalCount/pageSize+1;
+         }
+         if (pageNow==pageCount){
+             nextBtn.setVisible(false);
+         }else {
+             nextBtn.setVisible(true);
+         }
+
+     }
+
+
+    private void LayoutNorth(Container contentpane) {
+        //增加事件监听
+        addBtn.addActionListener(mainViewhandler);//增加查询功能
+        updateBtn.addActionListener(mainViewhandler);
+        delBtn.addActionListener(mainViewhandler);
+        searchBtn.addActionListener(mainViewhandler);
+
+        norjpanel.add(addBtn);
+        norjpanel.add(updateBtn);
+        norjpanel.add(delBtn);
+        norjpanel.add(searchBtn);
+        norjpanel.add(searchTxt);
+        contentpane.add(norjpanel,BorderLayout.NORTH);
+    }
+
+    public void setPageNow(int pageNow) {
+        this.pageNow = pageNow;
+    }
+    public int getPageNow() {
+        return pageNow;
+    }
+    public void reloadTable(){
+        TableDTO dto = getTableDTO();//getVectors进行了方法封装
+        MainViewTableModel.updateModel(dto.getData());
+        mainViewTable.RenderRule();
+        showPreNext(dto.getTotalCount());
+    }
+    public int[] getSelectedStudentIds(){
+        int[] selectedRows = mainViewTable.getSelectedRows();
+        int[] id=new int[selectedRows.length];
+        for (int i=0;i<selectedRows.length;i++){
+            int rowIndex=selectedRows[i];
+            Object idObj=mainViewTable.getValueAt(rowIndex, 0);
+            id[i]=Integer.valueOf(idObj.toString());
+        }
+        return id;
+    }
+
+    public static void main(String[] args) {
+        new MainView();
+    }
+}
