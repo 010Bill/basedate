@@ -1,0 +1,94 @@
+package servic;
+
+import javax.swing.*;
+import java.awt.*;
+
+
+public class AddStudentView extends JDialog {
+
+    JPanel jPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,10,20));
+    JLabel idLabel=new JLabel("编号",JLabel.RIGHT);
+    JTextField idtxt=new JTextField();
+    JLabel nameLabel=new JLabel("姓名",JLabel.RIGHT);
+    JTextField nametxt=new JTextField();
+    JLabel genLabel=new JLabel("性别",JLabel.RIGHT);
+    JTextField gentxt=new JTextField();
+    JLabel idsLabel=new JLabel("学号",JLabel.RIGHT);
+    JTextField idstxt=new JTextField();
+    JLabel birLabel=new JLabel("生日",JLabel.RIGHT);
+    JTextField birtxt=new JTextField();
+    JLabel mathLabel=new JLabel("数学",JLabel.RIGHT);
+    JTextField mathtxt=new JTextField();
+    JLabel peLabel=new JLabel("体育",JLabel.RIGHT);
+    JTextField petxt=new JTextField();
+    JLabel javaLabel=new JLabel("java",JLabel.RIGHT);
+    JTextField javatxt=new JTextField();
+    JButton addBtn=new JButton("添加");
+
+    AddStudentViewhandler addStudentViewhandler;
+    public AddStudentView(MainView mainview) {
+
+        super(mainview,"添加学生",true);
+
+        addStudentViewhandler=new AddStudentViewhandler(this);
+        idLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(idLabel);
+        idtxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(idtxt);
+        nameLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(nameLabel);
+        nametxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(nametxt);
+        genLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(genLabel);
+        gentxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(gentxt);
+        idsLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(idsLabel);
+        idstxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(idstxt);
+        birLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(birLabel);
+        birtxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(birtxt);
+        mathLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(mathLabel);
+        mathtxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(mathtxt);
+        peLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(peLabel);
+        petxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(petxt);
+        javaLabel.setPreferredSize(new Dimension(80, 30));
+        jPanel.add(javaLabel);
+        javatxt.setPreferredSize(new Dimension(200, 30));
+        jPanel.add(javatxt);
+
+        addBtn.addActionListener(addStudentViewhandler);
+        jPanel.add(addBtn);
+
+        Container contentPane=getContentPane();
+        contentPane.add(jPanel);
+
+
+        setSize(350, 500);
+        setLocationRelativeTo(null);//使显示框居中
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);//点×关闭后退出程序
+        setResizable(false);//显示框无法改变
+        setVisible(true);   //可见
+    }
+    public StudentDO buildStudentDO(){
+         StudentDO studentDO=new StudentDO();
+         studentDO.setId(String.valueOf(idtxt.getText()));
+         studentDO.setName(nametxt.getText());
+         studentDO.setGender(gentxt.getText());
+         studentDO.setIds(Integer.valueOf(idstxt.getText()));
+         studentDO.setMath(Double.valueOf(mathtxt.getText()));
+         studentDO.setPe(Double.valueOf(petxt.getText()));
+         studentDO.setJava(Double.valueOf(javatxt.getText()));
+
+         return studentDO;
+
+    }
+
+}
