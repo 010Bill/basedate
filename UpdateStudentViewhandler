@@ -1,0 +1,34 @@
+package servic;
+
+import servic.*;
+import servic.UpdateStudentView;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class UpdateStudentViewhandler implements ActionListener {
+    private UpdateStudentView updateStudentView;
+    private MainView mainView;
+    public UpdateStudentViewhandler(UpdateStudentView updateStudentView,MainView mainView) {
+        this.updateStudentView = updateStudentView;
+        this.mainView=mainView;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jButton = (JButton) e.getSource();
+        String text = jButton.getText();
+        if ("修改".equals(text)) {
+            StudentService studentService=new StudentServiceImpl();
+            StudentDO studentDO=updateStudentView.buildUpdateStudentDO();
+            boolean updateResult=studentService.update(studentDO);
+            if (updateResult){
+                //重新加载表格更新数据
+                mainView.reloadTable();
+                updateStudentView.dispose();
+            }else {
+                JOptionPane.showConfirmDialog(updateStudentView, "修改失败");
+            }
+        }
+    }
+}
