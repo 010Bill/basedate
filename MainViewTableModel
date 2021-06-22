@@ -1,0 +1,42 @@
+package servic;
+
+import javax.swing.table.DefaultTableModel;
+import java.util.Vector;
+
+public class MainViewTableModel extends DefaultTableModel {
+
+    static Vector<String> columns=new Vector<>();
+    static {
+        columns.addElement("姓名");
+        columns.addElement("性别");
+        columns.addElement("学号");
+        columns.addElement("出生年月日");
+        columns.addElement("数学");
+        columns.addElement("JAVA");
+        columns.addElement("体育");
+        columns.addElement("总分");
+    }
+    private MainViewTableModel(){
+        super(null,columns);
+    }
+    //利用静态与模式私有使表格无法编辑
+    private static MainViewTableModel mainViewTableModel=new MainViewTableModel();
+    public static MainViewTableModel assembleModel(Vector<Vector<Object>>data){
+        mainViewTableModel.setDataVector(data,columns);
+        return mainViewTableModel;
+    }
+    public static void updateModel(Vector<Vector<Object>>data){
+        mainViewTableModel.setDataVector(data,columns);
+
+    }
+
+    public static Vector<String> getColumns() {
+        return columns;
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+}
+
