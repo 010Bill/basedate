@@ -1,0 +1,32 @@
+package servic;
+import servic.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class AddStudentViewhandler implements ActionListener {
+    private AddStudentView addStudentView;
+    private MainView mainView;
+    public AddStudentViewhandler(AddStudentView addStudentView) {
+        this.addStudentView = addStudentView;
+        this.mainView=mainView;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jButton = (JButton) e.getSource();
+        String text = jButton.getText();
+        if ("添加".equals(text)) {
+            StudentService studentService=new StudentServiceImpl();
+            StudentDO studentDO=addStudentView.buildStudentDO();
+            boolean addResult=studentService.add(studentDO);
+            if (addResult){
+                //重新加载表格更新数据
+                mainView.reloadTable();
+                addStudentView.dispose();
+            }else {
+                JOptionPane.showConfirmDialog(addStudentView, "添加失败");
+            }
+        }
+    }
+}
