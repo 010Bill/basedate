@@ -1,0 +1,68 @@
+package servic.handler;
+
+import servic.DTO.AdminDO;
+import servic.AdminService;
+import servic.View.LoginView;
+import servic.View.MainView;
+import servic.impl.AdminServiceImpl;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+public class Loginhandler extends KeyAdapter implements ActionListener {
+
+    private LoginView loginView;
+    public Loginhandler(LoginView loginView){
+        this.loginView=loginView;
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jButton=(JButton)e.getSource();
+        String text=jButton.getText();
+        if("重置".equals(text)){
+         loginView.getUsertxt().setText("");
+         loginView.getPasswordtxt().setText("");
+        }else if ("登录".equals(text)){
+            login();
+        }
+
+    }
+
+    private void login() {
+        String user=loginView.getUsertxt().getText();
+        char[] chars=loginView.getPwdField().getPassword();
+        if (user==null||"".equals(user.trim())||chars==null){
+            JOptionPane.showMessageDialog(loginView, "用户名密码必填");
+            return;
+        }
+        String pwd=new String(chars);
+        System.out.println(user+":"+pwd);
+        //查询用户
+        AdminService adminService = new AdminServiceImpl();
+        AdminDO adminDO=new AdminDO();
+        adminDO.setUserName(user);
+        adminDO.setPwd(pwd);
+        boolean flag=adminService.validateAdmin(adminDO);
+        if(flag){
+        //跳转到主界面并销毁登录界面
+            new MainView();
+            loginView.dispose();
+        }
+        else {
+          JOptionPane.showMessageDialog(loginView, "用户名密码错误");
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(KeyEvent.VK_ENTER==e.getKeyCode()){
+            login();
+        }
+
+    }
+}
