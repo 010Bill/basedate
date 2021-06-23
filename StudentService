@@ -1,0 +1,16 @@
+package servic;
+
+import servic.DTO.StudentDO;
+import servic.DTO.TableDTO;
+
+public interface StudentService {
+    TableDTO retrieveStudents(StudentRequest request);
+    boolean add(StudentDO studentDO);
+
+
+    StudentDO getById(int selectedStudentId);
+
+    boolean update(StudentDO studentDO);
+
+    boolean delete(int[] selectedStudentIds);
+}
