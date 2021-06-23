@@ -1,0 +1,49 @@
+package servic.impl;
+
+import servic.DTO.AdminDO;
+import servic.AdminService;
+import servic.Util.DBUtil;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public  class AdminServiceImpl implements AdminService {
+    @Override
+    public boolean validateAdmin(AdminDO adminDo) {
+        //进行登录校验
+        String userName=adminDo.getUserName();
+        String pwdParam=adminDo.getPwd();
+        if (userName==null||"".equals(userName.trim())){
+              return false;
+        }
+        String sql = "select pwd from new_table where user_name = ?";
+        Connection conn=null;
+        PreparedStatement ps=null;
+        try {
+            conn = DBUtil.getConn();
+            if (conn==null){
+                return false;
+            }
+            ps = conn.prepareCall(sql);
+            ps.setString(1, adminDo.getUserName());
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()){
+                String pwd= resultSet.getString(1);
+                if (adminDo.getPwd().equals(pwd)){
+                    return true;
+                }
+            }
+        }catch (Exception e){
+         e.printStackTrace();
+        }finally {
+            DBUtil.closeConn(conn);
+            DBUtil.closePs(ps);
+
+        }
+
+
+        return false;
+    }
+
+}
